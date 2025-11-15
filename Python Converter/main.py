@@ -17,18 +17,25 @@ def sanitize_text(text):
     return ''.join(ch for ch in text if ch.isprintable() or ch in '\n\r\t')
 
 # ===== Conversion Functions =====
-def convert_docx_to_pdf(input_path, output_path):
+def convert_docx_to_pdf(input_path, output_path, progress_callback=None):
     docx_to_pdf(input_path, output_path)
+    if progress_callback:
+        progress_callback(100)
 
 def convert_pdf_to_docx(input_path, output_path, progress_callback=None):
     converter = pdf2docx_conv(input_path)
     num_pages = converter.doc.pages
-    def update_progress(page):
+
+    def update_progress_safe(page):
         if progress_callback:
-            percent = int((page/num_pages)*100)
-            progress_callback(percent)
-    converter.convert(output_path, start=0, end=num_pages, callback=update_progress)
+            percent = int((page / num_pages) * 100)
+            converter.root.after(0, lambda: progress_callback(percent))
+
+    converter.convert(output_path, start=0, end=num_pages,
+                      callback=lambda page: progress_callback(int((page/num_pages)*100)) if progress_callback else None)
     converter.close()
+    if progress_callback:
+        progress_callback(100)
 
 def convert_pdf_to_pptx(input_path, output_path, progress_callback=None):
     prs = Presentation()
@@ -43,50 +50,68 @@ def convert_pdf_to_pptx(input_path, output_path, progress_callback=None):
         if progress_callback:
             progress_callback(int((idx+1)/total*100))
     prs.save(output_path)
+    if progress_callback:
+        progress_callback(100)
 
-def convert_txt_to_pdf(input_path, output_path):
+def convert_txt_to_pdf(input_path, output_path, progress_callback=None):
     styles = getSampleStyleSheet()
     doc = SimpleDocTemplate(output_path)
     with open(input_path, "r", encoding="utf-8", errors="ignore") as f:
         text = sanitize_text(f.read())
     story = [Paragraph(text.replace("\n","<br/>"), styles["Normal"])]
     doc.build(story)
+    if progress_callback:
+        progress_callback(100)
 
-def convert_pdf_to_txt(input_path, output_path):
+def convert_pdf_to_txt(input_path, output_path, progress_callback=None):
     reader = PyPDF2.PdfReader(open(input_path, "rb"))
     text = ""
-    for page in reader.pages:
+    for idx, page in enumerate(reader.pages):
         page_text = page.extract_text() or ""
-        text += sanitize_text(page_text)+"\n"
+        text += sanitize_text(page_text) + "\n"
+        if progress_callback:
+            progress_callback(int((idx+1)/len(reader.pages)*100))
     with open(output_path, "w", encoding="utf-8", errors="ignore") as f:
         f.write(text)
+    if progress_callback:
+        progress_callback(100)
 
-def convert_docx_to_pptx(input_path, output_path):
+def convert_docx_to_pptx(input_path, output_path, progress_callback=None):
     from docx import Document
     docx_file = Document(input_path)
     prs = Presentation()
-    for para in docx_file.paragraphs:
-        if para.text.strip():
-            slide = prs.slides.add_slide(prs.slide_layouts[1])
-            if slide.placeholders:
-                body = slide.placeholders[1]
-                body.text_frame.text = sanitize_text(para.text)
-            else:
-                slide.shapes.add_textbox(0,0,prs.slide_width,prs.slide_height).text = sanitize_text(para.text)
+    paragraphs = [p for p in docx_file.paragraphs if p.text.strip()]
+    total = len(paragraphs)
+    for idx, para in enumerate(paragraphs):
+        slide = prs.slides.add_slide(prs.slide_layouts[1])
+        if slide.placeholders:
+            body = slide.placeholders[1]
+            body.text_frame.text = sanitize_text(para.text)
+        else:
+            slide.shapes.add_textbox(0,0,prs.slide_width,prs.slide_height).text = sanitize_text(para.text)
+        if progress_callback:
+            progress_callback(int((idx+1)/total*100))
     prs.save(output_path)
+    if progress_callback:
+        progress_callback(100)
 
-def convert_pptx_to_docx(input_path, output_path):
+def convert_pptx_to_docx(input_path, output_path, progress_callback=None):
     from docx import Document
     prs = Presentation(input_path)
     docx_file = Document()
-    for slide in prs.slides:
+    total = len(prs.slides)
+    for idx, slide in enumerate(prs.slides):
         if slide.shapes.title and slide.shapes.title.text.strip():
             docx_file.add_heading(sanitize_text(slide.shapes.title.text), level=1)
         for shape in slide.shapes:
             if hasattr(shape,"text") and shape.text.strip() and shape is not slide.shapes.title:
                 docx_file.add_paragraph(sanitize_text(shape.text))
         docx_file.add_paragraph("\n")
+        if progress_callback:
+            progress_callback(int((idx+1)/total*100))
     docx_file.save(output_path)
+    if progress_callback:
+        progress_callback(100)
 
 # ===== Circular Progress Bar =====
 class CircularProgressBar(tk.Canvas):
@@ -97,40 +122,42 @@ class CircularProgressBar(tk.Canvas):
         self.fg=fg
         self.bg=bg
         self.text_color=text_color
-        self.create_oval(width//2,width//2,size-width//2,size-width//2,outline=self.bg,width=self.width,tags="bg_arc")
+        self.create_oval(width//2,width//2,size-width//2,size-width//2,outline=self.bg,width=self.width)
         self.arc = self.create_arc(width//2,width//2,size-width//2,size-width//2,start=-90,extent=0,
-                                   style="arc",outline=self.fg,width=self.width,tags="progress_arc")
+                                   style="arc",outline=self.fg,width=self.width)
         self.text = self.create_text(size//2,size//2,text="0%",font=("Arial",18,"bold"),fill=self.text_color)
 
     def update_progress(self,percent):
-        percent=max(0,min(100,percent))
-        self.itemconfig(self.arc,extent=percent*3.6)
-        self.itemconfig(self.text,text=f"{int(percent)}%")
+        percent = max(0,min(100,percent))
+        self.itemconfig(self.arc, extent=percent*3.6)
+        self.itemconfig(self.text, text=f"{int(percent)}%")
         self.update_idletasks()
 
 # ===== GUI =====
 class FileConverterApp:
     def __init__(self, root):
-        self.root=root
+        self.root = root
         self.root.title("Universal File Converter")
         self.root.geometry("900x550")
         self.root.resizable(False,False)
-        self.file_path=None
+        self.file_path = None
 
-        # Left frame
-        self.left_frame=tk.Frame(root,width=450,height=550)
+        # Left frame with background image
+        self.left_frame = tk.Frame(root,width=450,height=550)
         self.left_frame.pack(side="left",fill="both")
         self.left_frame.pack_propagate(False)
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        bg_path = os.path.join(BASE_DIR, "background.png")
         try:
-            img=Image.open("background.png").resize((450,550),Image.LANCZOS)
+            img = Image.open(bg_path).resize((450,550), Image.LANCZOS)
         except:
-            img=Image.new('RGB',(450,550),'#4A90E2')
-            d=ImageDraw.Draw(img)
-            font=ImageFont.load_default()
-            d.text((50,250),"Universal\nConverter",fill=(255,255,255),font=font)
-        self.bg_image=ImageTk.PhotoImage(img)
-        self.bg_label=tk.Label(self.left_frame,image=self.bg_image)
-        self.bg_label.pack(fill="both",expand=True)
+            img = Image.new('RGB', (450,550), '#4A90E2')
+            d = ImageDraw.Draw(img)
+            font = ImageFont.load_default()
+            d.text((50,250),"Universal\nConverter", fill=(255,255,255), font=font)
+        self.bg_image = ImageTk.PhotoImage(img)
+        self.bg_label = tk.Label(self.left_frame,image=self.bg_image)
+        self.bg_label.pack(fill="both", expand=True)
 
         # Right frame
         self.right_frame=tk.Frame(root,width=450,height=550,bg="#f0f2f5",padx=20,pady=20)
@@ -182,6 +209,7 @@ class FileConverterApp:
         self.circular_progress=CircularProgressBar(self.right_frame,size=120,bg="#f0f2f5")
         self.circular_progress.pack(pady=(0,10))
 
+    # ===== Methods =====
     def upload_file(self):
         path=filedialog.askopenfilename()
         if path:
@@ -217,25 +245,20 @@ class FileConverterApp:
             self._reset_gui()
             return
         try:
-            # Call conversion functions with progress callback if supported
-            if conv=="DOCX → PDF":
-                convert_docx_to_pdf(self.file_path,save_path)
-            elif conv=="PDF → DOCX":
-                convert_pdf_to_docx(self.file_path,save_path,progress_callback=self.circular_progress.update_progress)
-            elif conv=="PDF → PPTX":
-                convert_pdf_to_pptx(self.file_path,save_path,progress_callback=self.circular_progress.update_progress)
-            elif conv=="TXT → PDF":
-                convert_txt_to_pdf(self.file_path,save_path)
-            elif conv=="PDF → TXT":
-                convert_pdf_to_txt(self.file_path,save_path)
-            elif conv=="DOCX → PPTX":
-                convert_docx_to_pptx(self.file_path,save_path)
-            elif conv=="PPTX → DOCX":
-                convert_pptx_to_docx(self.file_path,save_path)
+            # Map conversions to functions with progress callbacks
+            funcs = {
+                "DOCX → PDF": convert_docx_to_pdf,
+                "PDF → DOCX": convert_pdf_to_docx,
+                "PDF → PPTX": convert_pdf_to_pptx,
+                "TXT → PDF": convert_txt_to_pdf,
+                "PDF → TXT": convert_pdf_to_txt,
+                "DOCX → PPTX": convert_docx_to_pptx,
+                "PPTX → DOCX": convert_pptx_to_docx
+            }
+            func = funcs.get(conv)
+            func(self.file_path, save_path, progress_callback=self.circular_progress.update_progress)
 
-            self.circular_progress.update_progress(100)
             messagebox.showinfo("Success",f"Conversion complete!\nSaved as:\n{save_path}")
-
         except Exception as e:
             messagebox.showerror("Error",str(e))
         finally:
