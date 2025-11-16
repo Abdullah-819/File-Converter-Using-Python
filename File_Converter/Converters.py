@@ -1,113 +1,132 @@
-# converters.py
 import os
+from Utils import sanitize
+from logger import log
+
 from docx2pdf import convert as docx_to_pdf
-from pdf2docx import Converter as pdf2docx_conv
+from pdf2docx import Converter
 from pdf2image import convert_from_path
 from pptx import Presentation
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 import PyPDF2
-from Utils import sanitize_text
+# Converters.py (Corrected code)
+from docx import Document
 
-# --- DOCX → PDF ---
-def convert_docx_to_pdf(input_path, output_path, progress_callback=None):
-    docx_to_pdf(input_path, output_path)
-    if progress_callback:
-        progress_callback(100)
+# ---------- DOCX → PDF ----------
+def docx_to_pdf_conv(src, dst, callback):
+    docx_to_pdf(src, dst)
+    callback(100)
+    log("DOCX → PDF completed")
 
-# --- PDF → DOCX ---
-def convert_pdf_to_docx(input_path, output_path, progress_callback=None):
-    converter = pdf2docx_conv(input_path)
-    num_pages = converter.doc.pages
 
-    def update_progress(page):
-        if progress_callback:
-            percent = int((page / num_pages) * 100)
-            progress_callback(percent)
+# ---------- PDF → DOCX ----------
+def pdf_to_docx_conv(src, dst, callback):
+    # Use PyPDF2 to safely get the total page count
+    try:
+        reader = PyPDF2.PdfReader(src)
+        total = len(reader.pages)
+    except Exception as e:
+        # Fallback to a single conversion step if PyPDF2 fails
+        print(f"Warning: Could not get page count with PyPDF2. {e}")
+        total = 1 
+    
+    cv = Converter(src)
 
-    converter.convert(output_path, start=0, end=num_pages, callback=update_progress)
-    converter.close()
-    if progress_callback:
-        progress_callback(100)
+    # Convert the first page to get initial setup done (this is a tricky hack)
+    cv.convert(dst, start=0, end=1) 
+    callback(1 / total * 100)
+    
+    # Now convert the rest of the pages (or just the whole document if total is 1)
+    for page in range(1, total):
+        cv.convert(dst, start=page, end=page+1)
+        callback((page+1) / total * 100)
 
-# --- PDF → PPTX ---
-def convert_pdf_to_pptx(input_path, output_path, progress_callback=None):
+    cv.close()
+    log("PDF → DOCX completed")
+
+# ---------- PDF → PPTX ----------
+def pdf_to_pptx_conv(src, dst, callback):
     prs = Presentation()
-    images = convert_from_path(input_path)
-    total = len(images)
-    for idx, img in enumerate(images):
-        slide = prs.slides.add_slide(prs.slide_layouts[6])
-        temp_img = f"temp_page_{idx}.jpg"
-        img.save(temp_img)
-        slide.shapes.add_picture(temp_img, 0, 0, width=prs.slide_width, height=prs.slide_height)
-        os.remove(temp_img)
-        if progress_callback:
-            progress_callback(int((idx+1)/total*100))
-    prs.save(output_path)
-    if progress_callback:
-        progress_callback(100)
+    pages = convert_from_path(src)
 
-# --- TXT → PDF ---
-def convert_txt_to_pdf(input_path, output_path, progress_callback=None):
+    total = len(pages)
+
+    for i, img in enumerate(pages):
+        slide = prs.slides.add_slide(prs.slide_layouts[6])
+
+        temp = f"page_{i}.jpg"
+        img.save(temp)
+
+        slide.shapes.add_picture(temp, 0, 0, width=prs.slide_width)
+
+        os.remove(temp)
+
+        callback((i+1)/total * 100)
+
+    prs.save(dst)
+    log("PDF → PPTX completed")
+
+
+# ---------- TXT → PDF ----------
+def txt_to_pdf_conv(src, dst, callback):
     styles = getSampleStyleSheet()
-    doc = SimpleDocTemplate(output_path)
-    with open(input_path, "r", encoding="utf-8", errors="ignore") as f:
-        text = sanitize_text(f.read())
+    doc = SimpleDocTemplate(dst)
+
+    with open(src, "r", encoding="utf-8", errors="ignore") as f:
+        text = sanitize(f.read())
+
     story = [Paragraph(text.replace("\n", "<br/>"), styles["Normal"])]
     doc.build(story)
-    if progress_callback:
-        progress_callback(100)
 
-# --- PDF → TXT ---
-def convert_pdf_to_txt(input_path, output_path, progress_callback=None):
-    reader = PyPDF2.PdfReader(open(input_path, "rb"))
-    text = ""
+    callback(100)
+    log("TXT → PDF completed")
+
+
+# ---------- PDF → TXT ----------
+def pdf_to_txt_conv(src, dst, callback):
+    reader = PyPDF2.PdfReader(src)
     total = len(reader.pages)
-    for idx, page in enumerate(reader.pages):
-        page_text = page.extract_text() or ""
-        text += sanitize_text(page_text) + "\n"
-        if progress_callback:
-            progress_callback(int((idx+1)/total*100))
-    with open(output_path, "w", encoding="utf-8", errors="ignore") as f:
-        f.write(text)
-    if progress_callback:
-        progress_callback(100)
+    text = ""
 
-# --- DOCX → PPTX ---
-def convert_docx_to_pptx(input_path, output_path, progress_callback=None):
-    from docx import Document
-    docx_file = Document(input_path)
+    for i, page in enumerate(reader.pages):
+        text += (page.extract_text() or "") + "\n"
+        callback((i+1)/total * 100)
+
+    with open(dst, "w", encoding="utf-8") as f:
+        f.write(sanitize(text))
+
+    log("PDF → TXT completed")
+
+
+# ---------- DOCX → PPTX ----------
+def docx_to_pptx_conv(src, dst, callback):
+    doc = Document(src)
     prs = Presentation()
-    paragraphs = [p for p in docx_file.paragraphs if p.text.strip()]
-    total = len(paragraphs)
-    for idx, para in enumerate(paragraphs):
-        slide = prs.slides.add_slide(prs.slide_layouts[1])
-        if slide.placeholders:
-            body = slide.placeholders[1]
-            body.text_frame.text = sanitize_text(para.text)
-        else:
-            slide.shapes.add_textbox(0,0,prs.slide_width,prs.slide_height).text = sanitize_text(para.text)
-        if progress_callback:
-            progress_callback(int((idx+1)/total*100))
-    prs.save(output_path)
-    if progress_callback:
-        progress_callback(100)
 
-# --- PPTX → DOCX ---
-def convert_pptx_to_docx(input_path, output_path, progress_callback=None):
-    from docx import Document
-    prs = Presentation(input_path)
-    docx_file = Document()
+    paras = [p.text for p in doc.paragraphs if p.text.strip()]
+    total = len(paras)
+
+    for i, text in enumerate(paras):
+        slide = prs.slides.add_slide(prs.slide_layouts[1])
+        slide.shapes.title.text = text[:100]
+        callback((i+1)/total * 100)
+
+    prs.save(dst)
+    log("DOCX → PPTX completed")
+
+
+# ---------- PPTX → DOCX ----------
+def pptx_to_docx_conv(src, dst, callback):
+    prs = Presentation(src)
+    doc = Document()
+
     total = len(prs.slides)
-    for idx, slide in enumerate(prs.slides):
-        if slide.shapes.title and slide.shapes.title.text.strip():
-            docx_file.add_heading(sanitize_text(slide.shapes.title.text), level=1)
+
+    for i, slide in enumerate(prs.slides):
         for shape in slide.shapes:
-            if hasattr(shape,"text") and shape.text.strip() and shape is not slide.shapes.title:
-                docx_file.add_paragraph(sanitize_text(shape.text))
-        docx_file.add_paragraph("\n")
-        if progress_callback:
-            progress_callback(int((idx+1)/total*100))
-    docx_file.save(output_path)
-    if progress_callback:
-        progress_callback(100)
+            if hasattr(shape, "text") and shape.text.strip():
+                doc.add_paragraph(sanitize(shape.text))
+        callback((i+1)/total * 100)
+
+    doc.save(dst)
+    log("PPTX → DOCX completed")

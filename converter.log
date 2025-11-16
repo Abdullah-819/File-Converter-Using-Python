@@ -1,0 +1,130 @@
+2025-11-16 22:14:42,188 - INFO - File loaded: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.docx
+2025-11-16 22:14:48,617 - ERROR - Conversion failed
+Traceback (most recent call last):
+  File "g:\Data Science\File_Converter\main.py", line 142, in _convert_file
+    "DOCX \u2192 PDF": convert_docx_to_pdf,
+                  ^^^^^^^^^^^^^^^^^^^
+NameError: name 'convert_docx_to_pdf' is not defined
+2025-11-16 22:14:59,577 - ERROR - Conversion failed
+Traceback (most recent call last):
+  File "g:\Data Science\File_Converter\main.py", line 142, in _convert_file
+    "DOCX \u2192 PDF": convert_docx_to_pdf,
+                  ^^^^^^^^^^^^^^^^^^^
+NameError: name 'convert_docx_to_pdf' is not defined
+2025-11-16 22:19:48,226 - INFO - File loaded: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.docx
+2025-11-16 22:19:52,885 - INFO - Starting conversion: DOCX \u2192 PDF - C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.docx -> C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:20:00,447 - INFO - DOCX \u2192 PDF completed
+2025-11-16 22:20:01,428 - INFO - Conversion successful: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:20:06,071 - INFO - File loaded: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:20:14,525 - INFO - Starting conversion: PDF \u2192 DOCX - C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf -> C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-Gw.docx
+2025-11-16 22:20:14,556 - ERROR - Conversion failed
+Traceback (most recent call last):
+  File "g:\Data Science\File_Converter\main.py", line 153, in _convert_file
+    func(self.file_path, save_path,
+  File "g:\Data Science\File_Converter\Converters.py", line 25, in pdf_to_docx_conv
+    total = cv.pdf_page_total
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'Converter' object has no attribute 'pdf_page_total'
+2025-11-16 22:21:30,758 - INFO - Starting conversion: PDF \u2192 DOCX - C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf -> C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-38e9-3-G.docx
+2025-11-16 22:21:30,760 - ERROR - Conversion failed
+Traceback (most recent call last):
+  File "g:\Data Science\File_Converter\main.py", line 153, in _convert_file
+    func(self.file_path, save_path,
+  File "g:\Data Science\File_Converter\Converters.py", line 25, in pdf_to_docx_conv
+AttributeError: 'Converter' object has no attribute 'pdf_page_total'
+2025-11-16 22:23:19,759 - INFO - File loaded: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:23:25,149 - INFO - Starting conversion: PDF \u2192 DOCX - C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf -> C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-sas389-3-G.docx
+2025-11-16 22:23:25,169 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:23:25,169 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:23:25,169 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:23:25,370 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:23:25,370 - INFO - (1/1) Page 1
+2025-11-16 22:23:25,370 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:23:25,395 - INFO - (1/1) Page 1
+2025-11-16 22:23:25,410 - INFO - Terminated in 0.24s.
+2025-11-16 22:23:25,410 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:23:25,410 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:23:25,410 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:23:25,478 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:23:25,478 - INFO - (1/1) Page 2
+2025-11-16 22:23:25,480 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:23:25,489 - INFO - (1/1) Page 2
+2025-11-16 22:23:25,504 - INFO - Terminated in 0.09s.
+2025-11-16 22:23:25,504 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:23:25,504 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:23:25,504 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:23:25,569 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:23:25,569 - INFO - (1/1) Page 3
+2025-11-16 22:23:25,574 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:23:25,580 - INFO - (1/1) Page 3
+2025-11-16 22:23:25,590 - INFO - Terminated in 0.09s.
+2025-11-16 22:23:25,590 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:23:25,590 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:23:25,590 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:23:25,654 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:23:25,654 - INFO - (1/1) Page 4
+2025-11-16 22:23:25,659 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:23:25,665 - INFO - (1/1) Page 4
+2025-11-16 22:23:25,685 - INFO - Terminated in 0.09s.
+2025-11-16 22:23:25,686 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.pdf
+2025-11-16 22:23:25,686 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:23:25,686 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:23:25,740 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:23:25,740 - INFO - (1/1) Page 5
+2025-11-16 22:23:25,740 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:23:25,749 - INFO - (1/1) Page 5
+2025-11-16 22:23:25,760 - INFO - Terminated in 0.08s.
+2025-11-16 22:23:25,760 - INFO - PDF \u2192 DOCX completed
+2025-11-16 22:23:27,001 - INFO - Conversion successful: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-sas389-3-G.docx
+2025-11-16 22:27:41,917 - INFO - File loaded: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.docx
+2025-11-16 22:27:50,585 - INFO - Starting conversion: DOCX \u2192 PDF - C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.docx -> C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf
+2025-11-16 22:27:55,452 - INFO - DOCX \u2192 PDF completed
+2025-11-16 22:27:56,079 - INFO - Conversion successful: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf
+2025-11-16 22:28:12,247 - INFO - File loaded: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf
+2025-11-16 22:28:17,805 - INFO - Starting conversion: PDF \u2192 DOCX - C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf -> C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsdcxxc3-G.docx
+2025-11-16 22:28:17,826 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf
+2025-11-16 22:28:17,826 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:28:17,826 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:28:18,012 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:28:18,012 - INFO - (1/1) Page 1
+2025-11-16 22:28:18,012 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:28:18,018 - INFO - (1/1) Page 1
+2025-11-16 22:28:18,035 - INFO - Terminated in 0.21s.
+2025-11-16 22:28:18,036 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf
+2025-11-16 22:28:18,036 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:28:18,036 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:28:18,106 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:28:18,106 - INFO - (1/1) Page 2
+2025-11-16 22:28:18,111 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:28:18,117 - INFO - (1/1) Page 2
+2025-11-16 22:28:18,133 - INFO - Terminated in 0.10s.
+2025-11-16 22:28:18,135 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf
+2025-11-16 22:28:18,135 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:28:18,135 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:28:18,198 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:28:18,198 - INFO - (1/1) Page 3
+2025-11-16 22:28:18,202 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:28:18,209 - INFO - (1/1) Page 3
+2025-11-16 22:28:18,226 - INFO - Terminated in 0.09s.
+2025-11-16 22:28:18,226 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf
+2025-11-16 22:28:18,226 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:28:18,226 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:28:18,277 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:28:18,277 - INFO - (1/1) Page 4
+2025-11-16 22:28:18,287 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:28:18,297 - INFO - (1/1) Page 4
+2025-11-16 22:28:18,319 - INFO - Terminated in 0.09s.
+2025-11-16 22:28:18,319 - INFO - Start to convert C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsd3-G.pdf
+2025-11-16 22:28:18,319 - INFO - [1;36m[1/4] Opening document...[0m
+2025-11-16 22:28:18,319 - INFO - [1;36m[2/4] Analyzing document...[0m
+2025-11-16 22:28:18,366 - INFO - [1;36m[3/4] Parsing pages...[0m
+2025-11-16 22:28:18,366 - INFO - (1/1) Page 5
+2025-11-16 22:28:18,366 - INFO - [1;36m[4/4] Creating pages...[0m
+2025-11-16 22:28:18,379 - INFO - (1/1) Page 5
+2025-11-16 22:28:18,393 - INFO - Terminated in 0.07s.
+2025-11-16 22:28:18,393 - INFO - PDF \u2192 DOCX completed
+2025-11-16 22:28:19,326 - INFO - Conversion successful: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-ssdsdcxxc3-G.docx
+2025-11-16 22:28:51,716 - INFO - File loaded: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.docx
+2025-11-16 22:28:58,602 - INFO - Starting conversion: DOCX \u2192 PPTX - C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3-G.docx -> C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3sd-G.pptx
+2025-11-16 22:28:58,730 - INFO - DOCX \u2192 PPTX completed
+2025-11-16 22:28:59,797 - INFO - Conversion successful: C:/Users/ranaa/OneDrive - Higher Education Commission/db/FA24-BCS-389-3sd-G.pptx
